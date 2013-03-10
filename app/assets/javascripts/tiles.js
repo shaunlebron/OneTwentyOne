@@ -25,6 +25,11 @@ function getLatestTiles() {
 	$.ajax({
 		dataType: "json",
 		url: "getBlocks?roomKey="+roomKey,
+	}).done(function(data){
+		console.log("getBlocks done");
+		grid.updateFromServerData(data.blocks);
+	}).fail(function(data){
+		console.log("getBlocks fail");
 	}).always(function(data){
 		console.log("getBlocks always:");
 		console.log(data);
@@ -81,6 +86,25 @@ Grid.prototype = {
 			dataType: "json",
 			url: "clickBlock?x="+col+"&y="+row+"&roomKey="+roomKey,
 		});
+	},
+	clearTiles: function() {
+		var i,len=this.tiles.length;
+		for (i=0; i<len; i++) {
+			this.tiles[i].select(false);
+		}
+	},
+	updateFromServerData: function(data) {
+		this.clearTiles();
+		var x,y,i;
+		for (prop in data) {
+			if (data.hasOwnProperty(prop)) {
+				x = prop[0];
+				y = prop[1];
+				i = y * this.cols + x;
+				this.tiles[i].hue = data[prop];
+				this.tiles[i].select(true);
+			}
+		}
 	},
 };
 var hue = Math.random()*360;
