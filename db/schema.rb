@@ -17,7 +17,11 @@ ActiveRecord::Schema.define(:version => 20130310002553) do
     t.integer "x"
     t.integer "y"
     t.integer "color"
+<<<<<<< HEAD
     t.string  "room_key", :limit => 7
+=======
+    t.string  "room_key"
+>>>>>>> 743d753a2fa8d897956794c2f52ca044edd44f93
   end
 
   create_table "rooms", :force => true do |t|
