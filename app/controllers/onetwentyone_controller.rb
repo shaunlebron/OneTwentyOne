@@ -7,11 +7,16 @@ class OnetwentyoneController < ApplicationController
     colorToUse = thisUser.color;
     roomKey = thisUser.room_key;
 
-    databaseBlock = Block.first(:conditions => ["x = ? AND y = ? AND room_key = ?", x, y, roomKey]);
+    databaseBlock = Block.where(x: x, y: y, room_key: roomKey).first();
 
     if(databaseBlock.present?)
-      databaseBlock.color = colorToUse;
-      databaseBlock.save();
+      if(databaseBlock.color >= 0 && databaseBlock.color <= 360)
+        databaseBlock.color = -1;
+        databaseBlock.save();
+      else
+        databaseBlock.color = colorToUse;
+        databaseBlock.save();
+      end
     else
       databaseBlock = Block.new();
       databaseBlock.color = colorToUse;
@@ -21,6 +26,10 @@ class OnetwentyoneController < ApplicationController
       databaseBlock.save();
     end
 
+    room = Room.find_all_by_room_key(roomKey).first();
+    room.prominent_hex = colorToUse;
+    room.save();
+
     respond_to do |format|
       format.json { render :json => { } }
     end
@@ -29,11 +38,8 @@ class OnetwentyoneController < ApplicationController
     thisUser = User.new()
     thisUser.color=Random.rand(360);
     thisUser.room_key = params[:roomKey];
-    puts "TESTTEJSN";
-    puts params[:roomKey];
     thisUser.save();
     session[:userKey] = thisUser.user_key;
-    #return thisUser.color;
     respond_to do |format|
       format.json { render :json => {:color => thisUser.color } }
     end
@@ -44,8 +50,12 @@ class OnetwentyoneController < ApplicationController
     databaseBlocks.each do |d|
       blocks[[d.x, d.y]] = d.color;
     end
+
+    room = Room.find_all_by_room_key(params[:roomKey]).first();
+    coolColor = room.prominent_hex;
+
     respond_to do |format|
-      format.json { render :json => {:blocks => blocks } }
+      format.json { render :json => {:blocks => blocks, :prominent => coolColor } }
     end
   end
   def startNewRoom
@@ -56,11 +66,6 @@ class OnetwentyoneController < ApplicationController
     newRoom.width = 11;
     newRoom.save();
     redirect_to :controller => "Onetwentyone", :action => "Room", :roomKey => newRoom.room_key;
-    #redirect_to :controller => "Onetwentyone", :action => "Room?roomKey=" + newRoom.room_key
-
-    #respond_to do |format|
-    #  format.json { render :json => {:roomKey => "lknwlnskd"} }
-    #end
   end
 
   def index
