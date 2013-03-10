@@ -1,11 +1,25 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html>
-<head>
-  <title></title>
-</head>
-<body style="background: #EEEEEE;">
+	<head>
+		<meta charset='utf-8'>
+		<script src="/public/assets/javascripts/requestAnimationFrame.js"></script>
+		<script src="/public/assets/javascripts/tinycolor.js"></script>
+		<script src="/public/assets/javascripts/tiles.js"></script>
+	</head>
+	<style>
+		body {
+			margin:0;
+			padding:0;
+		}
+		canvas {
+			margin: 0;
+		}
+	</style>
+<body>
 
 <%= yield %>
+	<canvas id="canvas"></canvas>
 
 </body>
 </html>
