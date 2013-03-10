@@ -1,6 +1,8 @@
+var roomKey;
 var canvas,ctx;
 var width,height;
 var grid;
+var myhue;
 
 function randrange(min,max) {
 	var range = max-min;
@@ -9,6 +11,25 @@ function randrange(min,max) {
 
 function setBackground(color) {
 	document.body.style.backgroundColor = color;
+};
+
+// from: http://stackoverflow.com/a/5158301/142317
+function getParameterByName(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+	return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+roomKey = getParameterByName("roomKey");
+console.log("roomKey:",roomKey);
+
+function getLatestTiles() {
+	$.ajax({
+		dataType: "json",
+		url: "getBlocks?roomKey="+roomKey,
+	}).always(function(data){
+		console.log("getBlocks always:");
+		console.log(data);
+		setTimeout(getLatestTiles, 3000);
+	});
 };
 
 function Grid(r,c) {
@@ -54,8 +75,12 @@ Grid.prototype = {
 		var i = row*this.cols + col;
 		var tile = this.tiles[i];
 		tile.toggleSelect();
-		tile.hue = hue;
+		tile.hue = myhue;
 		setBackground(tile.getBgColor());
+		$.ajax({
+			dataType: "json",
+			url: "clickBlock?x="+col+"&y="+row+"&roomKey="+roomKey,
+		});
 	},
 };
 var hue = Math.random()*360;
@@ -159,13 +184,30 @@ function tick(time) {
 	}
 };
 
+
 window.addEventListener("load",function() {
 	canvas = document.getElementById('canvas');
 	ctx = canvas.getContext('2d');
-	grid = new Grid(11,11);
-	setupInput();
-	fullscreen();
-	requestAnimationFrame(tick);
+
+	$.ajax({
+		dataType: "json",
+		url: "getInitialColor?roomKey="+roomKey,
+	}).done(function(data){
+		console.log("getInitialColor done:",data);
+		myhue = data.color;
+	}).fail(function(data){
+		console.log("getInitialColor fail:",data);
+		myhue = 0;
+	}).always(function(data){
+		console.log("getInitialColor always:",data);
+
+		// Initialize everything.
+		grid = new Grid(11,11);
+		setupInput();
+		fullscreen();
+		requestAnimationFrame(tick);
+		getLatestTiles();
+	});
 });
 
 function setupInput() {
@@ -204,6 +246,5 @@ function setupInput() {
 		grid.touch(x,y);
 	};
 	canvas.addEventListener('mousedown',	wrapFunc(touchStart));
-	canvas.addEventListener('touchstart',	wrapFunc(touchStart));
+	//canvas.addEventListener('touchstart',	wrapFunc(touchStart));
 }
-

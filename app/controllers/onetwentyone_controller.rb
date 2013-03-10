@@ -32,7 +32,9 @@ class OnetwentyoneController < ApplicationController
   def startNewRoom
     #Generate a new random token, create the room, and return the token
     newRoom = Room.new();
-    redirect_to :action => "Room", :id => newRoom.room_key;
+    newRoom.generate_token();
+    redirect_to :controller => "Onetwentyone", :action => "Room", :roomKey => newRoom.room_key;
+    #redirect_to :controller => "Onetwentyone", :action => "Room?roomKey=" + newRoom.room_key
 
     #respond_to do |format|
     #  format.json { render :json => {:roomKey => "lknwlnskd"} }
@@ -40,11 +42,11 @@ class OnetwentyoneController < ApplicationController
   end
 
   def index
-    redirect_to :action => "Room";
+    startNewRoom();
   end
 
   def Room
-    if(params[:roomKey].blank?)
+    if(params[:roomKey].blank? && params[:id].blank?)
       startNewRoom();
     end
   end
