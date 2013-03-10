@@ -3,7 +3,7 @@ One Twenty One
 
 This is a web app for collaborative editing of an 11x11 color grid.  Each person gets one color over a flickering canvas:
 
-<img src="preview.png"></img>
+<img src="https://raw.github.com/shaunew/OneTwentyOne/master/app/assets/images/preview.png"></img>
 
 ## Collaborative Version:
 
