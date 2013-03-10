@@ -1,6 +1,7 @@
 var canvas,ctx;
 var width,height;
 var grid;
+var myhue;
 
 function randrange(min,max) {
 	var range = max-min;
@@ -54,7 +55,7 @@ Grid.prototype = {
 		var i = row*this.cols + col;
 		var tile = this.tiles[i];
 		tile.toggleSelect();
-		tile.hue = hue;
+		tile.hue = myhue;
 		setBackground(tile.getBgColor());
 	},
 };
@@ -159,13 +160,29 @@ function tick(time) {
 	}
 };
 
+
 window.addEventListener("load",function() {
 	canvas = document.getElementById('canvas');
 	ctx = canvas.getContext('2d');
-	grid = new Grid(11,11);
-	setupInput();
-	fullscreen();
-	requestAnimationFrame(tick);
+
+	$.ajax({
+		dataType: "json",
+		url: "getInitialColor",
+	}).done(function(data){
+		console.log("getInitialColor done:",data);
+		myhue = data.color;
+	}).fail(function(data){
+		console.log("getInitialColor fail:",data);
+		myhue = 0;
+	}).always(function(data){
+		console.log("getInitialColor always:",data);
+
+		// Initialize everything.
+		grid = new Grid(11,11);
+		setupInput();
+		fullscreen();
+		requestAnimationFrame(tick);
+	});
 });
 
 function setupInput() {
@@ -206,4 +223,3 @@ function setupInput() {
 	canvas.addEventListener('mousedown',	wrapFunc(touchStart));
 	canvas.addEventListener('touchstart',	wrapFunc(touchStart));
 }
-
