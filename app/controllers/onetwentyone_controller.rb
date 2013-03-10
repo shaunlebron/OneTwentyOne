@@ -40,7 +40,7 @@ class OnetwentyoneController < ApplicationController
   end
 
   def index
-    redirect_to :action => "Room";
+    startNewRoom();
   end
 
   def Room
