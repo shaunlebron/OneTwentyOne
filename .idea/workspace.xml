@@ -7,7 +7,7 @@
     <file path="/Dummy.txt" changelist="5ebeb990-90ea-4b2b-9983-d75fc5a96b3e" time="1362863236051" ignored="false" />
     <file path="/index.html.erb" changelist="5ebeb990-90ea-4b2b-9983-d75fc5a96b3e" time="1362873756114" ignored="false" />
     <file path="/Room.html.erb" changelist="5ebeb990-90ea-4b2b-9983-d75fc5a96b3e" time="1362873854841" ignored="false" />
-    <file path="/onetwentyone_controller.rb" changelist="5ebeb990-90ea-4b2b-9983-d75fc5a96b3e" time="1362875676564" ignored="false" />
+    <file path="/onetwentyone_controller.rb" changelist="5ebeb990-90ea-4b2b-9983-d75fc5a96b3e" time="1362876595186" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +45,7 @@
       <file leaf-file-name="onetwentyone_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/onetwentyone_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="7" selection-start="560" selection-end="560" vertical-scroll-proportion="0.33420366">
+            <state line="14" column="82" selection-start="403" selection-end="403" vertical-scroll-proportion="0.6214099">
               <folding />
             </state>
           </provider>
@@ -583,7 +583,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/onetwentyone_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="7" selection-start="560" selection-end="560" vertical-scroll-proportion="0.33420366">
+        <state line="14" column="82" selection-start="403" selection-end="403" vertical-scroll-proportion="0.6214099">
           <folding />
         </state>
       </provider>

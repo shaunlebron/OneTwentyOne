@@ -1,9 +1,10 @@
 class OnetwentyoneController < ApplicationController
-  def clickBlock(x, y)
+  def clickBlock
     #CLick the block at x and y.  Use the cookie to determine the new color
-
+    x = params[:x];
+    y = params[:y];
   end
-  def getInitialColor()
+  def getInitialColor
     #Get the initial color for a new user that has just loaded the page
 
     #Get the list of random colors
@@ -13,7 +14,7 @@ class OnetwentyoneController < ApplicationController
     Random.rand(25);
     return "#000000"
   end
-  def getBlocks()
+  def getBlocks
     #Get the values for all the blocks
     blocks = Hash.new("#FFFFFF");
 
@@ -21,7 +22,7 @@ class OnetwentyoneController < ApplicationController
 
     return blocks;
   end
-  def startNewRoom()
+  def startNewRoom
     #Start a new room
 
     #Generate a new random token, create the room, and return the token
