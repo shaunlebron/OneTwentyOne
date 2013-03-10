@@ -221,5 +221,5 @@ function setupInput() {
 		grid.touch(x,y);
 	};
 	canvas.addEventListener('mousedown',	wrapFunc(touchStart));
-	canvas.addEventListener('touchstart',	wrapFunc(touchStart));
+	//canvas.addEventListener('touchstart',	wrapFunc(touchStart));
 }
