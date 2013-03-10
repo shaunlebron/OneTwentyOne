@@ -57,6 +57,10 @@ Grid.prototype = {
 		tile.toggleSelect();
 		tile.hue = myhue;
 		setBackground(tile.getBgColor());
+		$.ajax({
+			dataType: "json",
+			url: "clickBlock?x="+col+"&y="+row,
+		});
 	},
 };
 var hue = Math.random()*360;
