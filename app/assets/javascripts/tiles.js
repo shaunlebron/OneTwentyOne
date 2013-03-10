@@ -12,6 +12,17 @@ function setBackground(color) {
 	document.body.style.backgroundColor = color;
 };
 
+function getLatestTiles() {
+	$.ajax({
+		dataType: "json",
+		url: "getBlocks",
+	}).always(function(data){
+		console.log("getBlocks always:");
+		console.log(data);
+		setTimeout(getLatestTiles, 3000);
+	});
+};
+
 function Grid(r,c) {
 	this.tiles = [];
 	this.rows = r;
@@ -186,6 +197,7 @@ window.addEventListener("load",function() {
 		setupInput();
 		fullscreen();
 		requestAnimationFrame(tick);
+		getLatestTiles();
 	});
 });
 
