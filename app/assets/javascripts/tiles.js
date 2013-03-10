@@ -96,8 +96,10 @@ Grid.prototype = {
 	updateFromServerData: function(data) {
 		this.clearTiles();
 		var x,y,i;
-		var prop,propStr;
+		var prop,propStr,value;
+		var hue;
 		for (propStr in data) {
+			value = data[propStr];
 			if (data.hasOwnProperty(propStr)) {
 				console.log("parsing block property string:",propStr);
 				prop = $.parseJSON(propStr);
@@ -105,9 +107,10 @@ Grid.prototype = {
 					x = prop[0];
 					y = prop[1];
 					i = y * this.cols + x;
-					console.log("parsed block property:",prop,x,y,i);
-					this.tiles[i].hue = data[prop];
-					this.tiles[i].select(true);
+					console.log("   parsed block property:",prop,x,y,i);
+					hue = value;
+					console.log("   setting hue to", hue);
+					this.tiles[i].setHue(hue);
 				}
 				else {
 					console.error("could not interpret block property string:",propStr);
@@ -158,6 +161,15 @@ Tile.prototype = {
 		if (Math.abs(this.light_offset) > this.light_range) {
 			this.light_offset -= this.light_speed * dt;
 			this.light_speed *= -1;
+		}
+	},
+	setHue: function(hue) {
+		if (hue < 0) {
+			this.select(false);
+		}
+		else {
+			this.hue = hue;
+			this.select(true);
 		}
 	},
 };
