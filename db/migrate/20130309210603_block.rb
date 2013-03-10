@@ -4,7 +4,7 @@ class Block < ActiveRecord::Migration
       t.integer :x
       t.integer :y
       t.integer :color
-      t.string :room_key, limit: 7
+      t.string :room_key
     end
   end
 end
