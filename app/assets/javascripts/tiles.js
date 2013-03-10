@@ -26,13 +26,10 @@ function getLatestTiles() {
 		dataType: "json",
 		url: "getBlocks?roomKey="+roomKey,
 	}).done(function(data){
-		console.log("getBlocks done");
 		grid.updateFromServerData(data);
 	}).fail(function(data){
-		console.log("getBlocks fail");
+		console.error("getBlocks fail");
 	}).always(function(data){
-		console.log("getBlocks always:");
-		console.log(data);
 		setTimeout(getLatestTiles, 3000);
 	});
 };
@@ -96,7 +93,10 @@ Grid.prototype = {
 	updateFromServerData: function(data) {
 		var blocks = data.blocks;
 		var bgHue = data.prominent;
-		setBackground(husl.toHex(bgHue,70,Math.random()*0.9));
+		console.log("latest background hue:",bgHue);
+		var bgColor = husl.toHex(bgHue,70,Math.random()*0.9);
+		console.log("calculated background color:",bgColor);
+		setBackground(bgColor);
 
 		this.clearTiles();
 		var x,y,i;
@@ -105,15 +105,12 @@ Grid.prototype = {
 		for (propStr in blocks) {
 			value = blocks[propStr];
 			if (blocks.hasOwnProperty(propStr)) {
-				console.log("parsing block property string:",propStr);
 				prop = $.parseJSON(propStr);
 				if (prop) {
 					x = prop[0];
 					y = prop[1];
 					i = y * this.cols + x;
-					console.log("   parsed block property:",prop,x,y,i);
 					hue = value;
-					console.log("   setting hue to", hue);
 					this.tiles[i].setHue(hue);
 				}
 				else {
@@ -242,13 +239,11 @@ window.addEventListener("load",function() {
 		dataType: "json",
 		url: "getInitialColor?roomKey="+roomKey,
 	}).done(function(data){
-		console.log("getInitialColor done:",data);
 		myhue = data.color;
 	}).fail(function(data){
-		console.log("getInitialColor fail:",data);
+		console.error("getInitialColor fail:",data);
 		myhue = 0;
 	}).always(function(data){
-		console.log("getInitialColor always:",data);
 
 		// Initialize everything.
 		grid = new Grid(11,11);
