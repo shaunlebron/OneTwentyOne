@@ -1,0 +1,7 @@
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: onetwentyone
+  pool: 5
+  username: One
+  password: test
