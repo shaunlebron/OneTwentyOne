@@ -11,6 +11,31 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 0) do
+ActiveRecord::Schema.define(:version => 20130310002553) do
+
+  create_table "blocks", :force => true do |t|
+    t.integer "x"
+    t.integer "y"
+    t.integer "color"
+    t.string  "room_key", :limit => 7
+  end
+
+  create_table "colors", :force => true do |t|
+    t.string  "name", :limit => 50
+    t.integer "hex"
+  end
+
+  create_table "rooms", :force => true do |t|
+    t.integer "width"
+    t.integer "height"
+    t.integer "prominent_hex"
+    t.string  "room_key"
+  end
+
+  create_table "users", :force => true do |t|
+    t.string  "user_key"
+    t.string  "room_key"
+    t.integer "color"
+  end
 
 end
