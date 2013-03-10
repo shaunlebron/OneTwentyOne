@@ -93,10 +93,10 @@ Grid.prototype = {
 	updateFromServerData: function(data) {
 		var blocks = data.blocks;
 		var bgHue = data.prominent;
-		console.log("latest background hue:",bgHue);
-		var bgColor = husl.toHex(bgHue,70,70);
-		console.log("calculated background color:",bgColor);
-		setBackground(bgColor);
+		if (bgHue != null) {
+			var bgColor = husl.toHex(bgHue,70,70);
+			setBackground(bgColor);
+		}
 
 		this.clearTiles();
 		var x,y,i;
