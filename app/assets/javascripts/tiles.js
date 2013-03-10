@@ -94,7 +94,7 @@ Grid.prototype = {
 		var blocks = data.blocks;
 		var bgHue = data.prominent;
 		console.log("latest background hue:",bgHue);
-		var bgColor = husl.toHex(bgHue,70,0.9);
+		var bgColor = husl.toHex(bgHue,70,70);
 		console.log("calculated background color:",bgColor);
 		setBackground(bgColor);
 
