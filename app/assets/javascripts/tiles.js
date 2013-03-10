@@ -96,15 +96,22 @@ Grid.prototype = {
 	updateFromServerData: function(data) {
 		this.clearTiles();
 		var x,y,i;
+		var prop,propStr;
 		for (propStr in data) {
-			if (data.hasOwnProperty(prop)) {
+			if (data.hasOwnProperty(propStr)) {
+				console.log("parsing block property string:",propStr);
 				prop = $.parseJSON(propStr);
-				x = prop[0];
-				y = prop[1];
-				i = y * this.cols + x;
-				console.log("parsing block property:",propStr,prop,x,y,i);
-				this.tiles[i].hue = data[prop];
-				this.tiles[i].select(true);
+				if (prop) {
+					x = prop[0];
+					y = prop[1];
+					i = y * this.cols + x;
+					console.log("parsed block property:",prop,x,y,i);
+					this.tiles[i].hue = data[prop];
+					this.tiles[i].select(true);
+				}
+				else {
+					console.error("could not interpret block property string:",propStr);
+				}
 			}
 		}
 	},
