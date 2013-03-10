@@ -20,11 +20,6 @@ ActiveRecord::Schema.define(:version => 20130310002553) do
     t.string  "room_key", :limit => 7
   end
 
-  create_table "colors", :force => true do |t|
-    t.string  "name", :limit => 50
-    t.integer "hex"
-  end
-
   create_table "rooms", :force => true do |t|
     t.integer "width"
     t.integer "height"
