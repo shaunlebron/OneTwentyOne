@@ -27,7 +27,7 @@ function getLatestTiles() {
 		url: "getBlocks?roomKey="+roomKey,
 	}).done(function(data){
 		console.log("getBlocks done");
-		grid.updateFromServerData(data.blocks);
+		grid.updateFromServerData(data);
 	}).fail(function(data){
 		console.log("getBlocks fail");
 	}).always(function(data){
@@ -94,13 +94,17 @@ Grid.prototype = {
 		}
 	},
 	updateFromServerData: function(data) {
+		var blocks = data.blocks;
+		var bgHue = data.prominent;
+		setBackground(husl.toHex(bgHue,70,Math.random()*0.9));
+
 		this.clearTiles();
 		var x,y,i;
 		var prop,propStr,value;
 		var hue;
-		for (propStr in data) {
-			value = data[propStr];
-			if (data.hasOwnProperty(propStr)) {
+		for (propStr in blocks) {
+			value = blocks[propStr];
+			if (blocks.hasOwnProperty(propStr)) {
 				console.log("parsing block property string:",propStr);
 				prop = $.parseJSON(propStr);
 				if (prop) {
