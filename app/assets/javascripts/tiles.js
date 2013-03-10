@@ -1,3 +1,4 @@
+var roomKey;
 var canvas,ctx;
 var width,height;
 var grid;
@@ -12,10 +13,18 @@ function setBackground(color) {
 	document.body.style.backgroundColor = color;
 };
 
+// from: http://stackoverflow.com/a/5158301/142317
+function getParameterByName(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+	return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+roomKey = getParameterByName("roomKey");
+console.log("roomKey:",roomKey);
+
 function getLatestTiles() {
 	$.ajax({
 		dataType: "json",
-		url: "getBlocks",
+		url: "getBlocks?roomKey="+roomKey,
 	}).always(function(data){
 		console.log("getBlocks always:");
 		console.log(data);
@@ -70,7 +79,7 @@ Grid.prototype = {
 		setBackground(tile.getBgColor());
 		$.ajax({
 			dataType: "json",
-			url: "clickBlock?x="+col+"&y="+row,
+			url: "clickBlock?x="+col+"&y="+row+"&roomKey="+roomKey,
 		});
 	},
 };
@@ -182,7 +191,7 @@ window.addEventListener("load",function() {
 
 	$.ajax({
 		dataType: "json",
-		url: "getInitialColor",
+		url: "getInitialColor?roomKey="+roomKey,
 	}).done(function(data){
 		console.log("getInitialColor done:",data);
 		myhue = data.color;
