@@ -7,6 +7,10 @@ function randrange(min,max) {
 	return Math.random()*range + min;
 }
 
+function setBackground(color) {
+	document.body.style.backgroundColor = color;
+};
+
 function Grid(r,c) {
 	this.tiles = [];
 	this.rows = r;
@@ -29,8 +33,8 @@ Grid.prototype = {
 		var w = width/this.cols;
 		var h = height/this.rows;
 		var i=0;
-		for (x=0; x<this.cols; x++) {
-			for (y=0; y<this.rows; y++) {
+		for (y=0; y<this.rows; y++) {
+			for (x=0; x<this.cols; x++) {
 				ctx.fillStyle = this.tiles[i].getColor();
 				i++;
 				ctx.fillRect(x*w,y*h,w,h);
@@ -47,11 +51,19 @@ Grid.prototype = {
 		var size = height / this.rows;
 		var row = Math.floor(y / size);
 		var col = Math.floor(x / size);
-		//console.log(x,y,row,col);
+		var i = row*this.cols + col;
+		var tile = this.tiles[i];
+		tile.toggleSelect();
+		tile.hue = hue;
+		setBackground(tile.getBgColor());
 	},
 };
+var hue = Math.random()*360;
 
 function Tile(light,light_range,light_speed) {
+	var num = 3;
+	this.hue = Math.round(randrange(0,num))*(360/num);
+	this.saturation = 0;
 	this.light = light;
 	this.light_offset = 0;
 	this.light_range = light_range;
@@ -59,11 +71,29 @@ function Tile(light,light_range,light_speed) {
 };
 
 Tile.prototype = {
+	getLight: function() {
+		var light = this.light + this.light_offset;
+		light = Math.max(0,light);
+		light = Math.min(255,light);
+		light = light / 255 * 100;
+		return light;
+	},
 	getColor: function() {
-		var c = this.light + this.light_offset;
-		c = Math.max(0,c);
-		c = Math.min(255,c);
-		return tinycolor({r:c,g:c,b:c}).toHexString();
+		var light = this.getLight();
+		light *= this.selected ? 0.9 : 0.5;
+		var sat = this.selected ? 100 : 0;
+		return husl.toHex(this.hue,sat,light*0.9);
+	},
+	getBgColor: function() {
+		var light = this.getLight();
+		//return tinycolor({h:this.hue, s:50, v:light}).toHexString();
+		return husl.toHex(this.hue,70,light*0.9);
+	},
+	toggleSelect: function() {
+		this.selected = !this.selected;
+	},
+	select: function(on) {
+		this.selected = on;
 	},
 	update: function(dt) {
 		this.light_offset += this.light_speed*dt;
@@ -77,7 +107,6 @@ Tile.prototype = {
 function fullscreen() {
 	var windowAspect = window.innerWidth / window.innerHeight;
 
-
 	var canvasAspect = grid.aspect;
 	if (windowAspect > canvasAspect) { // window
 		height = window.innerHeight;
@@ -88,7 +117,7 @@ function fullscreen() {
 		height = width / canvasAspect;
 	}
 
-	var margin = 1.5;
+	var margin = 1;
 
 	width -= 2*margin*width/grid.cols;
 	height -= 2*margin*height/grid.rows;
