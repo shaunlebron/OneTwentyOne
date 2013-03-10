@@ -101,6 +101,7 @@ Grid.prototype = {
 				x = prop[0];
 				y = prop[1];
 				i = y * this.cols + x;
+				console.log("parsing block property:",prop,x,y,i);
 				this.tiles[i].hue = data[prop];
 				this.tiles[i].select(true);
 			}
