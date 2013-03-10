@@ -35,10 +35,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="onetwentyone_controller.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="onetwentyone_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/onetwentyone_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="59" selection-start="409" selection-end="409" vertical-scroll-proportion="0.0">
+            <state line="24" column="18" selection-start="579" selection-end="579" vertical-scroll-proportion="0.15469614">
               <folding />
             </state>
           </provider>
@@ -53,10 +53,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="routes.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="routes.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/routes.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="59" selection-start="283" selection-end="283" vertical-scroll-proportion="0.28176796">
+            <state line="6" column="59" selection-start="283" selection-end="283" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -671,13 +671,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/onetwentyone_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="59" selection-start="409" selection-end="409" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/onetwentyone/Room.html.erb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="0" selection-start="1" selection-end="1" vertical-scroll-proportion="-0.65384614">
@@ -708,7 +701,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/routes.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="59" selection-start="283" selection-end="283" vertical-scroll-proportion="0.28176796">
+        <state line="6" column="59" selection-start="283" selection-end="283" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/onetwentyone_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="18" selection-start="579" selection-end="579" vertical-scroll-proportion="0.15469614">
           <folding />
         </state>
       </provider>
