@@ -4,6 +4,8 @@ var width,height;
 var grid;
 var myhue;
 
+var parentElement;
+
 function Tweener(value) {
 	this.setValueAndTarget(value);
 };
@@ -42,7 +44,7 @@ function randrange(min,max) {
 }
 
 function setBackground(color) {
-	document.body.style.backgroundColor = color;
+	parentElement.style.backgroundColor = color;
 };
 
 // from: http://stackoverflow.com/a/5158301/142317
@@ -268,17 +270,26 @@ Tile.prototype = {
 	},
 };
 
-function fitCanvasToScreen() {
-	var windowAspect = window.innerWidth / window.innerHeight;
+function getParentSize() {
+	var s = {
+		w: parentElement.clientWidth,
+		h: parentElement.clientHeight,
+	};
+	s.aspect = s.w / s.h;
+	return s;
+}
 
-	var canvasAspect = grid.aspect;
-	if (windowAspect > canvasAspect) { // window
-		height = window.innerHeight;
-		width = height * canvasAspect;
+function fitCanvasToScreen() {
+	var parentSize = getParentSize();
+	console.log(parentSize);
+
+	if (parentSize.aspect > grid.aspect) {
+		height = parentSize.h;
+		width = height * grid.aspect;
 	}
 	else {
-		width = window.innerWidth;
-		height = width / canvasAspect;
+		width = parentSize.w;
+		height = width / grid.aspect;
 	}
 
 	var margin = 1;
@@ -292,8 +303,10 @@ function fitCanvasToScreen() {
 }
 
 var center = function() {
-	document.body.style.paddingTop = (window.innerHeight - height)/2 + "px";
-	document.body.style.paddingLeft = (window.innerWidth - width)/2 + "px";
+	var parentSize = getParentSize();
+	canvas.style.position = "relative";
+	canvas.style.top = (parentSize.h/2 - height/2) + "px";
+	canvas.style.left = (parentSize.w/2 - width/2) + "px";
 };
 
 window.addEventListener("resize", function() {
@@ -325,6 +338,7 @@ function tick(time) {
 
 
 window.addEventListener("load",function() {
+	parentElement = document.getElementById('canvas-container');
 	canvas = document.getElementById('canvas');
 	ctx = canvas.getContext('2d');
 
@@ -386,15 +400,15 @@ function setupInput() {
 	//canvas.addEventListener('touchstart',	wrapFunc(touchStart));
 
 	// from: https://developer.mozilla.org/en-US/docs/DOM/Using_fullscreen_mode
-	function toggleFullScreen() {
+	function toggleFullScreen(elm) {
 		if (!document.fullscreenElement &&    // alternative standard method
 				!document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
-			if (document.body.requestFullscreen) {
-				document.body.requestFullscreen();
-			} else if (document.body.mozRequestFullScreen) {
-				document.body.mozRequestFullScreen();
-			} else if (document.body.webkitRequestFullscreen) {
-				document.body.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			if (elm.requestFullscreen) {
+				elm.requestFullscreen();
+			} else if (elm.mozRequestFullScreen) {
+				elm.mozRequestFullScreen();
+			} else if (elm.webkitRequestFullscreen) {
+				elm.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
 			}
 		} else {
 			if (document.cancelFullScreen) {
@@ -408,7 +422,7 @@ function setupInput() {
 	}
 	document.addEventListener('keydown', function(e) {
 		if (e.keyCode == 13) { // enter key
-			toggleFullScreen();
+			toggleFullScreen(parentElement);
 		}
 	},false);
 }
