@@ -5,17 +5,15 @@ This is a web app for collaborative editing of an 11x11 color grid.  Each person
 
 <img src="https://raw.github.com/shaunew/OneTwentyOne/master/app/assets/images/preview.png"></img>
 
-## Collaborative Version:
+Play
+----
 
-1. Go to [http://onetwentyone.herokuapp.com](http://onetwentyone.herokuapp.com). You will be directed to a new room created for you.
-2. Share the room's URL with a friend you wish to collaborate with.
-3. Click squares to color them.
+Play [single player](http://shaunew.github.com/OneTwentyOne) or [multi player](http://onetwentyone.herokuapp.com) (share the generated room link with a friend to collaborate)
 
-## Non-collaborative Version:
+Just click the squares to color or erase.
 
-Go to [http://shaunew.github.com/OneTwentyOne](http://shaunew.github.com/OneTwentyOne) to play with a non-collaborative version.
-
-## About:
+About
+-----
 
 A weekend project between [Keenan](http://github.com/kceeze), [Trey](http://github.com/treydwilson), and [Shaun](http://github.com/shaunew).
 
