@@ -268,7 +268,7 @@ Tile.prototype = {
 	},
 };
 
-function fullscreen() {
+function fitCanvasToScreen() {
 	var windowAspect = window.innerWidth / window.innerHeight;
 
 	var canvasAspect = grid.aspect;
@@ -292,12 +292,12 @@ function fullscreen() {
 }
 
 var center = function() {
-	document.body.style.marginTop = (window.innerHeight - height)/2 + "px";
-	document.body.style.marginLeft = (window.innerWidth - width)/2 + "px";
+	document.body.style.paddingTop = (window.innerHeight - height)/2 + "px";
+	document.body.style.paddingLeft = (window.innerWidth - width)/2 + "px";
 };
 
 window.addEventListener("resize", function() {
-	fullscreen();
+	fitCanvasToScreen();
 	grid.draw();
 }, false);
 
@@ -341,7 +341,7 @@ window.addEventListener("load",function() {
 		// Initialize everything.
 		grid = new Grid(11,11);
 		setupInput();
-		fullscreen();
+		fitCanvasToScreen();
 		requestAnimationFrame(tick);
 		getLatestTiles();
 	});
@@ -384,4 +384,31 @@ function setupInput() {
 	};
 	canvas.addEventListener('mousedown',	wrapFunc(touchStart));
 	//canvas.addEventListener('touchstart',	wrapFunc(touchStart));
+
+	// from: https://developer.mozilla.org/en-US/docs/DOM/Using_fullscreen_mode
+	function toggleFullScreen() {
+		if (!document.fullscreenElement &&    // alternative standard method
+				!document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+			if (document.body.requestFullscreen) {
+				document.body.requestFullscreen();
+			} else if (document.body.mozRequestFullScreen) {
+				document.body.mozRequestFullScreen();
+			} else if (document.body.webkitRequestFullscreen) {
+				document.body.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			}
+		} else {
+			if (document.cancelFullScreen) {
+				document.cancelFullScreen();
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen();
+			} else if (document.webkitCancelFullScreen) {
+				document.webkitCancelFullScreen();
+			}
+		}
+	}
+	document.addEventListener('keydown', function(e) {
+		if (e.keyCode == 13) { // enter key
+			toggleFullScreen();
+		}
+	},false);
 }

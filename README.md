@@ -8,7 +8,9 @@ Click on squares to create a flickering mosaic.  Collaborate with others as well
 Play
 ----
 
-Play [single player](http://shaunew.github.com/OneTwentyOne) or [multi player](http://onetwentyone.herokuapp.com) (share the generated room link with a friend to collaborate).  Click the squares to color or erase.
+Play [single player](http://shaunew.github.com/OneTwentyOne) or [multi player](http://onetwentyone.herokuapp.com) (share the generated room link with a friend to collaborate).
+
+Click the squares to color or erase.  Press **Enter** to toggle fullscreen.
 
 About
 -----
