@@ -4,6 +4,38 @@ var width,height;
 var grid;
 var myhue;
 
+function Tweener(value) {
+	this.setValueAndTarget(value);
+};
+Tweener.prototype = {
+	setValue: function(value) {
+		this.value = value;
+		this.updateDirection();
+	},
+	updateDirection: function() {
+		this.dir = (this.target < this.value) ? -1 : 1;
+	},
+	setValueAndTarget: function(value) {
+		this.value = this.target = value;
+		this.dir = 0;
+	},
+	setTarget: function(target, speed) {
+		this.target = target;
+		this.speed = speed;
+		this.updateDirection();
+	},
+	update: function(dt) {
+		if (this.value == this.target) {
+			return;
+		}
+		this.value += this.dir * this.speed * dt;
+		if ((this.dir < 0 && this.value <= this.target) ||
+			(this.dir > 0 && this.value >= this.target)) {
+			this.value = this.target;
+		}
+	},
+};
+
 function randrange(min,max) {
 	var range = max-min;
 	return Math.random()*range + min;
@@ -76,8 +108,7 @@ Grid.prototype = {
 		var col = Math.floor(x / size);
 		var i = row*this.cols + col;
 		var tile = this.tiles[i];
-		tile.toggleSelect();
-		tile.hue = myhue;
+		tile.touch();
 		setBackground(tile.getBgColor());
 		$.ajax({
 			dataType: "json",
@@ -87,7 +118,7 @@ Grid.prototype = {
 	clearTiles: function() {
 		var i,len=this.tiles.length;
 		for (i=0; i<len; i++) {
-			this.tiles[i].select(false);
+			this.tiles[i].updateHueFromServer(-1);
 		}
 	},
 	updateFromServerData: function(data) {
@@ -111,7 +142,7 @@ Grid.prototype = {
 					y = prop[1];
 					i = y * this.cols + x;
 					hue = value;
-					this.tiles[i].setHue(hue);
+					this.tiles[i].updateHueFromServer(hue);
 				}
 				else {
 					console.error("could not interpret block property string:",propStr);
@@ -123,13 +154,22 @@ Grid.prototype = {
 var hue = Math.random()*360;
 
 function Tile(light,light_range,light_speed) {
-	var num = 3;
-	this.hue = Math.round(randrange(0,num))*(360/num);
-	this.saturation = 0;
+
 	this.light = light;
 	this.light_offset = 0;
 	this.light_range = light_range;
 	this.light_speed = light_speed;
+
+	// Create tween target constants.
+	this.selectedLightFrac = 0.9;
+	this.unselectedLightFrac = 0.5;
+	this.selectedSat = 100;
+	this.unselectedSat = 0;
+
+	// Create tween objects for saturation, hue, and light fraction.
+	this.satTween = new Tweener(this.unselectedSat);
+	this.hueTween = new Tweener(Math.random()*360);
+	this.lightFracTween = new Tweener(this.unselectedLightFrac);
 };
 
 Tile.prototype = {
@@ -142,36 +182,89 @@ Tile.prototype = {
 	},
 	getColor: function() {
 		var light = this.getLight();
-		light *= this.selected ? 0.9 : 0.5;
-		var sat = this.selected ? 100 : 0;
-		return husl.toHex(this.hue,sat,light*0.9);
+		//light *= this.selected ? 0.9 : 0.5;
+		//var sat = this.selected ? 100 : 0;
+		return husl.toHex(
+			this.hueTween.value,
+			this.satTween.value,
+			light * this.lightFracTween.value * 0.9);
 	},
 	getBgColor: function() {
 		var light = this.getLight();
-		//return tinycolor({h:this.hue, s:50, v:light}).toHexString();
-		return husl.toHex(this.hue,70,light*0.9);
+		return husl.toHex(
+			this.hueTween.target,
+			70,
+			light*0.9);
 	},
-	toggleSelect: function() {
-		this.selected = !this.selected;
+
+	// helper functions for fading or setting color values.
+	fadeToSat: function(sat) {
+		this.satTween.setTarget(sat, randrange(30,50));
 	},
+	fadeToHue: function(hue) {
+		this.hueTween.setTarget(hue, randrange(100,200));
+	},
+	fadeToLightFrac: function(lightFrac) {
+		this.lightFracTween.setTarget(lightFrac, randrange(0.3,0.5));
+	},
+	setHue: function(hue) {
+		this.hueTween.setValueAndTarget(hue);
+	},
+	setSat: function(sat) {
+		this.satTween.setValueAndTarget(sat);
+	},
+	setLightFrac: function(lightFrac) {
+		this.lightFracTween.setValueAndTarget(lightFrac);
+	},
+
+	// When touching a tile, we want it immediately set.
+	touch: function() {
+		if (this.selected) {
+			// switch off
+			this.setSat(this.unselectedSat);
+			this.setLightFrac(this.unselectedLightFrac);
+			this.select(false);
+		}
+		else {
+			// switch on
+			this.updateHueFromServer(myhue);
+			this.setSat(this.selectedSat);
+			this.setLightFrac(this.selectedLightFrac);
+			this.setHue(myhue);
+			this.select(true);
+		}
+	},
+
+	// When updating from server, we want to fade the result to the screen.
+	updateHueFromServer: function(hue) {
+		if (hue < 0) {
+			// fade out
+			this.fadeToSat(this.unselectedSat);
+			this.fadeToLightFrac(this.unselectedLightFrac);
+			this.select(false);
+		}
+		else {
+			// fade in
+			this.fadeToSat(this.selectedSat);
+			this.fadeToLightFrac(this.selectedLightFrac);
+			this.fadeToHue(hue);
+			this.select(true);
+		}
+	},
+
 	select: function(on) {
 		this.selected = on;
 	},
+
 	update: function(dt) {
 		this.light_offset += this.light_speed*dt;
 		if (Math.abs(this.light_offset) > this.light_range) {
 			this.light_offset -= this.light_speed * dt;
 			this.light_speed *= -1;
 		}
-	},
-	setHue: function(hue) {
-		if (hue < 0) {
-			this.select(false);
-		}
-		else {
-			this.hue = hue;
-			this.select(true);
-		}
+		this.hueTween.update(dt);
+		this.satTween.update(dt);
+		this.lightFracTween.update(dt);
 	},
 };
 
