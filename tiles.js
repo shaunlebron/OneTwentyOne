@@ -55,10 +55,11 @@ function getParameterByName(name) {
 roomKey = getParameterByName("roomKey");
 console.log("roomKey:",roomKey);
 
+var processStr = "";
 function getLatestTiles() {
 	$.ajax({
 		dataType: "json",
-		url: "getBlocks?roomKey="+roomKey,
+		url: "processData?" + $.param({roomKey:roomKey,coordinates:processStr}),
 	}).done(function(data){
 		grid.updateFromServerData(data);
 	}).fail(function(data){
@@ -66,6 +67,7 @@ function getLatestTiles() {
 	}).always(function(data){
 		setTimeout(getLatestTiles, 3000);
 	});
+	processStr = "";
 };
 
 function Grid(r,c) {
@@ -112,10 +114,14 @@ Grid.prototype = {
 		var tile = this.tiles[i];
 		tile.touch();
 		setBackground(tile.getBgColor());
-		$.ajax({
-			dataType: "json",
-			url: "clickBlock?x="+col+"&y="+row+"&roomKey="+roomKey,
-		});
+		if (processStr) {
+			processStr += "|";
+		}
+		processStr += col + "," + row;
+		//$.ajax({
+			//dataType: "json",
+			//url: "clickBlock?x="+col+"&y="+row+"&roomKey="+roomKey,
+		//});
 	},
 	clearTiles: function() {
 		var i,len=this.tiles.length;
@@ -344,7 +350,7 @@ window.addEventListener("load",function() {
 
 	$.ajax({
 		dataType: "json",
-		url: "getInitialColor?roomKey="+roomKey,
+		url: "getInitialColor?" + $.param({roomKey:roomKey}),
 	}).done(function(data){
 		myhue = data.color;
 	}).fail(function(data){
