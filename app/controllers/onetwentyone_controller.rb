@@ -10,10 +10,14 @@ class OnetwentyoneController < ApplicationController
       xy = splitCoordinate.split(",");
       x = xy[0];
       y = xy[1];
-      internalClickBlock(x, y, session[:userKey])
+      internalClickBlock(x, y, session[:userKey]);
     }
 
     getBlocks();
+  end
+
+  def getRandomRoomKeys
+    rooms = Room.all(:order => 'RANDOM()', :limit => 6);
   end
 
   def clickBlock
