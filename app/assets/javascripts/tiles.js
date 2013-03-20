@@ -59,7 +59,7 @@ var processStr = "";
 function getLatestTiles() {
 	$.ajax({
 		dataType: "json",
-		url: "processData?roomKey="+roomKey+"&coordinates="+processStr,
+		url: "processData?" + $.param({roomKey:roomKey,coordinates:processStr}),
 	}).done(function(data){
 		grid.updateFromServerData(data);
 	}).fail(function(data){
@@ -350,7 +350,7 @@ window.addEventListener("load",function() {
 
 	$.ajax({
 		dataType: "json",
-		url: "getInitialColor?roomKey="+roomKey,
+		url: "getInitialColor?" + $.param({roomKey:roomKey}),
 	}).done(function(data){
 		myhue = data.color;
 	}).fail(function(data){
