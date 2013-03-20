@@ -1,39 +1,29 @@
 class OnetwentyoneController < ApplicationController
+  
+  def processData
+    coordinates = params[:coordinates]
+
+    splitCoordinates = coordinates.split("|");
+
+    splitCoordinates.each {
+      |splitCoordinate|
+      xy = splitCoordinate.split(",");
+      x = xy[0];
+      y = xy[1];
+      internalClickBlock(x, y, session[:userKey])
+    }
+
+    getBlocks();
+  end
+
   def clickBlock
-    #CLick the block at x and y.  Use the cookie to determine the new color
-    x = params[:x];
-    y = params[:y];
-    thisUser = User.find_all_by_user_key(session[:userKey]).first();
-    colorToUse = thisUser.color;
-    roomKey = thisUser.room_key;
-
-    databaseBlock = Block.where(x: x, y: y, room_key: roomKey).first();
-
-    if(databaseBlock.present?)
-      if(databaseBlock.color >= 0 && databaseBlock.color <= 360)
-        databaseBlock.color = -1;
-        databaseBlock.save();
-      else
-        databaseBlock.color = colorToUse;
-        databaseBlock.save();
-      end
-    else
-      databaseBlock = Block.new();
-      databaseBlock.color = colorToUse;
-      databaseBlock.x = x;
-      databaseBlock.y = y;
-      databaseBlock.room_key = roomKey;
-      databaseBlock.save();
-    end
-
-    room = Room.find_all_by_room_key(roomKey).first();
-    room.prominent_hex = colorToUse;
-    room.save();
+    internalClickBlock(params[:x], params[:y], session[:userKey]);
 
     respond_to do |format|
       format.json { render :json => { } }
     end
   end
+
   def getInitialColor
     thisUser = User.new()
     thisUser.color=Random.rand(360);
@@ -77,4 +67,36 @@ class OnetwentyoneController < ApplicationController
       startNewRoom();
     end
   end
+
+
+  protected
+  def internalClickBlock(x, y, userKey)
+    thisUser = User.find_all_by_user_key(userKey).first();
+    colorToUse = thisUser.color;
+    roomKey = thisUser.room_key;
+
+    databaseBlock = Block.where(x: x, y: y, room_key: roomKey).first();
+
+    if(databaseBlock.present?)
+      if(databaseBlock.color >= 0 && databaseBlock.color <= 360)
+        databaseBlock.color = -1;
+        databaseBlock.save();
+      else
+        databaseBlock.color = colorToUse;
+        databaseBlock.save();
+      end
+    else
+      databaseBlock = Block.new();
+      databaseBlock.color = colorToUse;
+      databaseBlock.x = x;
+      databaseBlock.y = y;
+      databaseBlock.room_key = roomKey;
+      databaseBlock.save();
+    end
+
+    room = Room.find_all_by_room_key(roomKey).first();
+    room.prominent_hex = colorToUse;
+    room.save();
+  end
+
 end
