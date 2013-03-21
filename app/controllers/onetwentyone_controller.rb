@@ -18,6 +18,10 @@ class OnetwentyoneController < ApplicationController
 
   def getRandomRoomKeys
     rooms = Room.all(:order => 'RANDOM()', :limit => 6);
+
+    respond_to do |format|
+      format.json { render :json => rooms}
+    end
   end
 
   def clickBlock
@@ -30,6 +34,27 @@ class OnetwentyoneController < ApplicationController
 
   def getInitialColor
     thisUser = User.new()
+
+    #Generate a random hue (switch is to help with the fact some hues are small for some colors)
+    switchColor = Random.rand(7);
+    case switchColor
+    when 0
+      thisUser.color = Random.rand(30);
+    when 1
+      thisUser.color = Random.rand(25) + 30;
+    when 2
+      thisUser.color = Random.rand(10) + 55;
+    when 3
+      thisUser.color = Random.rand(100) + 65;
+    when 4
+      thisUser.color = Random.rand(125) + 165;
+    when 5
+      thisUser.color = Random.rand(35) + 290;
+    when 6
+      thisUser.color = Random.rand(35) + 325;
+    end
+
+
     thisUser.color=Random.rand(360);
     thisUser.room_key = params[:roomKey];
     thisUser.save();
