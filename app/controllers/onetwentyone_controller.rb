@@ -8,9 +8,10 @@ class OnetwentyoneController < ApplicationController
     splitCoordinates.each {
       |splitCoordinate|
       xy = splitCoordinate.split(",");
-      x = xy[0];
-      y = xy[1];
-      internalClickBlock(x, y, session[:userKey]);
+      stateSelected = xy[0];
+      x = xy[1];
+      y = xy[2];
+      internalClickBlock(stateSelected, x, y, session[:userKey]);
     }
 
     getBlocks();
@@ -25,7 +26,7 @@ class OnetwentyoneController < ApplicationController
   end
 
   def clickBlock
-    internalClickBlock(params[:x], params[:y], session[:userKey]);
+    internalClickBlock("n", params[:x], params[:y], session[:userKey]);
 
     respond_to do |format|
       format.json { render :json => { } }
@@ -99,29 +100,51 @@ class OnetwentyoneController < ApplicationController
 
 
   protected
-  def internalClickBlock(x, y, userKey)
+  def internalClickBlock(state, x, y, userKey)
     thisUser = User.find_all_by_user_key(userKey).first();
     colorToUse = thisUser.color;
     roomKey = thisUser.room_key;
 
     databaseBlock = Block.where(x: x, y: y, room_key: roomKey).first();
 
-    if(databaseBlock.present?)
-      if(databaseBlock.color >= 0 && databaseBlock.color <= 360)
-        databaseBlock.color = -1;
-        databaseBlock.save();
+    if(state == "n")
+      if(databaseBlock.present?)
+        if(databaseBlock.color >= 0 && databaseBlock.color <= 360)
+          databaseBlock.color = -1;
+          databaseBlock.save();
+        else
+          databaseBlock.color = colorToUse;
+          databaseBlock.save();
+        end
       else
+        databaseBlock = Block.new();
         databaseBlock.color = colorToUse;
+        databaseBlock.x = x;
+        databaseBlock.y = y;
+        databaseBlock.room_key = roomKey;
         databaseBlock.save();
       end
-    else
-      databaseBlock = Block.new();
+    elsif(state == "s")
+      if(!databaseBlock.present?)
+        databaseBlock = Block.new();
+        databaseBlock.x = x;
+        databaseBlock.y = y;
+        databaseBlock.room_key = roomKey;
+      end
       databaseBlock.color = colorToUse;
-      databaseBlock.x = x;
-      databaseBlock.y = y;
-      databaseBlock.room_key = roomKey;
       databaseBlock.save();
+    elsif(state == "e")
+      if(!databaseBlock.present?)
+        databaseBlock = Block.new();
+        databaseBlock.x = x;
+        databaseBlock.y = y;
+        databaseBlock.room_key = roomKey;
+      end
+      databaseBlock.color = -1;
+      databaseBlock.save();
+
     end
+
 
     room = Room.find_all_by_room_key(roomKey).first();
     room.prominent_hex = colorToUse;
