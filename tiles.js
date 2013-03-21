@@ -4,6 +4,9 @@ var width,height;
 var grid;
 var myhue;
 
+var numrows = 11;
+var numcols = 11;
+
 var parentElement;
 
 function Tweener(value) {
@@ -55,8 +58,25 @@ function getParameterByName(name) {
 roomKey = getParameterByName("roomKey");
 console.log("roomKey:",roomKey);
 
-var processStr = "";
+var cellUpdates = {};
+function makeProcessDataStr() {
+	var processStr = "";
+	for (cellIndex in cellUpdates) {
+		if (cellUpdates.hasOwnProperty(cellIndex)) {
+			if (processStr) {
+				processStr += "|";
+			}
+			var x = cellIndex % numcols;
+			var y = Math.floor(cellIndex / numrows);
+			processStr += (cellUpdates[cellIndex] ? "s" : "e") + "," + x + "," + y;
+		}
+	}
+	return processStr;
+};
+
 function getLatestTiles() {
+	var processStr = makeProcessDataStr();
+	console.log(processStr);
 	$.ajax({
 		dataType: "json",
 		url: "processData?" + $.param({roomKey:roomKey,coordinates:processStr}),
@@ -67,7 +87,7 @@ function getLatestTiles() {
 	}).always(function(data){
 		setTimeout(getLatestTiles, 3000);
 	});
-	processStr = "";
+	cellUpdates = {};
 };
 
 function Grid(r,c) {
@@ -114,19 +134,14 @@ Grid.prototype = {
 		var tile = this.tiles[i];
 		tile.touch();
 		setBackground(tile.getBgColor());
-		if (processStr) {
-			processStr += "|";
-		}
-		processStr += col + "," + row;
-		//$.ajax({
-			//dataType: "json",
-			//url: "clickBlock?x="+col+"&y="+row+"&roomKey="+roomKey,
-		//});
+		cellUpdates[i] = tile.selected;
 	},
 	clearTiles: function() {
 		var i,len=this.tiles.length;
 		for (i=0; i<len; i++) {
-			this.tiles[i].updateHueFromServer(-1);
+			if (cellUpdates[i] == undefined) {
+				this.tiles[i].updateHueFromServer(-1);
+			}
 		}
 	},
 	updateFromServerData: function(data) {
@@ -149,8 +164,10 @@ Grid.prototype = {
 					x = prop[0];
 					y = prop[1];
 					i = y * this.cols + x;
-					hue = value;
-					this.tiles[i].updateHueFromServer(hue);
+					if (cellUpdates[i] == undefined) {
+						hue = value;
+						this.tiles[i].updateHueFromServer(hue);
+					}
 				}
 				else {
 					console.error("could not interpret block property string:",propStr);
@@ -359,7 +376,7 @@ window.addEventListener("load",function() {
 	}).always(function(data){
 
 		// Initialize everything.
-		grid = new Grid(11,11);
+		grid = new Grid(numrows,numcols);
 		setupInput();
 		fitCanvasToScreen();
 		requestAnimationFrame(tick);
